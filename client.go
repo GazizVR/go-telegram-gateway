@@ -54,6 +54,7 @@ func (c *Client) do(
 	if err != nil {
 		return err
 	}
+
 	reqBody, err := json.Marshal(body)
 	if err != nil {
 		return err
@@ -67,11 +68,16 @@ func (c *Client) do(
 	if err != nil {
 		return err
 	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+c.token)
+
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
