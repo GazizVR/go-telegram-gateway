@@ -1,5 +1,10 @@
 package telegramgateway
 
+import (
+	"encoding/json"
+	"time"
+)
+
 type RequestStatus struct {
 	RequestId          string              `json:"request_id"`
 	PhoneNumber        string              `json:"phone_number"`
@@ -9,6 +14,26 @@ type RequestStatus struct {
 	DeliveryStatus     *DeliveryStatus     `json:"delivery_status"`
 	VerificationStatus *VerificationStatus `json:"verification_status"`
 	Payload            *string             `json:"payload"`
+}
+
+type UnixTime struct {
+	time.Time
+}
+
+func (t UnixTime) MarshalJSON() ([]byte, error) {
+	return json.Marshal(t.Unix())
+}
+
+func (t *UnixTime) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		return nil
+	}
+	var sec int64
+	if err := json.Unmarshal(data, &sec); err != nil {
+		return err
+	}
+	t.Time = time.Unix(sec, 0).UTC()
+	return nil
 }
 
 type DeliveryState string
@@ -23,7 +48,7 @@ const (
 
 type DeliveryStatus struct {
 	Status    DeliveryState `json:"status"`
-	UpdatedAt int64         `json:"updated_at"`
+	UpdatedAt UnixTime      `json:"updated_at"`
 }
 
 type VerificationState string
@@ -37,6 +62,6 @@ const (
 
 type VerificationStatus struct {
 	Status      VerificationState `json:"status"`
-	UpdatedAt   int64             `json:"updated_at"`
+	UpdatedAt   UnixTime          `json:"updated_at"`
 	CodeEntered *string           `json:"code_entered"`
 }
