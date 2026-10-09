@@ -46,10 +46,10 @@ const methodRevokeVerificationMessage = "revokeVerificationMessage"
 func (c *Client) RevokeVerificationMessage(
 	ctx context.Context,
 	req RevokeVerificationMessageRequest,
-) (*bool, error) {
+) (bool, error) {
 	var isRevoked bool
 	if err := c.call(ctx, methodRevokeVerificationMessage, req, &isRevoked); err != nil {
-		return nil, err
+		return false, err
 	}
-	return &isRevoked, nil
+	return isRevoked, nil
 }
