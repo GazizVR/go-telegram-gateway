@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,12 +17,12 @@ func (c *Client) do(
 ) (statusCode int, respBody []byte, err error) {
 	endpoint, err := url.JoinPath(c.baseURL, method)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, fmt.Errorf("build url: %w", err)
 	}
 
 	reqBody, err := json.Marshal(body)
 	if err != nil {
-		return http.StatusInternalServerError, nil, err
+		return 0, nil, fmt.Errorf("encode request: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -31,7 +32,7 @@ func (c *Client) do(
 		bytes.NewReader(reqBody),
 	)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, fmt.Errorf("create request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -39,13 +40,13 @@ func (c *Client) do(
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return resp.StatusCode, nil, err
+		return 0, nil, fmt.Errorf("%w: %w", ErrNetwork, err)
 	}
 
 	defer resp.Body.Close()
 	respBody, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return resp.StatusCode, nil, err
+		return 0, nil, fmt.Errorf("%w: %w", ErrNetwork, err)
 	}
 
 	return resp.StatusCode, respBody, nil

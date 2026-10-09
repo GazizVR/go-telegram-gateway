@@ -11,13 +11,10 @@ type APIError struct {
 }
 
 func (err *APIError) Error() string {
-	return fmt.Sprintf(
-		"telegramgateway (status: %d): %s",
-		err.StatusCode,
-		err.Message,
-	)
+	return fmt.Sprintf("telegramgateway: %s (status: %d)", err.Message, err.StatusCode)
 }
 
 var (
+	ErrNetwork         = errors.New("telegramgateway: network error")
 	ErrResponseParsing = errors.New("telegramgateway: parse response")
 )
