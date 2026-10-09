@@ -50,16 +50,3 @@ func (c *Client) do(
 
 	return resp.StatusCode, respBody, nil
 }
-
-func (c *Client) parseResponse(
-	ctx context.Context,
-	method string,
-	body any,
-	result any,
-) error {
-	statusCode, respBody, err := c.do(ctx, method, body)
-	if err != nil {
-		return err
-	}
-	return nil
-}
