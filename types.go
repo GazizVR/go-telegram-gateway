@@ -26,8 +26,17 @@ type DeliveryStatus struct {
 	UpdatedAt int64         `json:"updated_at"`
 }
 
+type VerificationState string
+
+const (
+	VerificationCodeValid   VerificationState = "code_valid"
+	VerificationCodeInvalid VerificationState = "code_invalid"
+	VerificationMaxAttempts VerificationState = "code_max_attempts_exceeded"
+	VerificationExpired     VerificationState = "expired"
+)
+
 type VerificationStatus struct {
-	Status      string  `json:"status"`
-	UpdatedAt   int64   `json:"updated_at"`
-	CodeEntered *string `json:"code_entered"`
+	Status      VerificationState `json:"status"`
+	UpdatedAt   int64             `json:"updated_at"`
+	CodeEntered *string           `json:"code_entered"`
 }
