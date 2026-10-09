@@ -19,3 +19,7 @@ type CheckVerificationStatusRequest struct {
 	PhoneNumber string `json:"phone_number"`
 	Code        string `json:"code,omitempty"`
 }
+
+type RevokeVerificationMessageRequest struct {
+	RequestID string `json:"request_id"`
+}

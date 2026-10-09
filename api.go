@@ -40,3 +40,16 @@ func (c *Client) CheckVerificationStatus(
 	}
 	return &status, nil
 }
+
+const methodRevokeVerificationMessage = "revokeVerificationMessage"
+
+func (c *Client) RevokeVerificationMessage(
+	ctx context.Context,
+	req RevokeVerificationMessageRequest,
+) (*bool, error) {
+	var isRevoked bool
+	if err := c.call(ctx, methodRevokeVerificationMessage, req, &isRevoked); err != nil {
+		return nil, err
+	}
+	return &isRevoked, nil
+}
