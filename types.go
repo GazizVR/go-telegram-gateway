@@ -11,13 +11,23 @@ type RequestStatus struct {
 	Payload            *string             `json:"payload"`
 }
 
+type DeliveryState string
+
+const (
+	DeliverySent      DeliveryState = "sent"
+	DeliveryDelivered DeliveryState = "delivered"
+	DeliveryRead      DeliveryState = "read"
+	DeliveryExpired   DeliveryState = "expired"
+	DeliveryRevoked   DeliveryState = "revoked"
+)
+
 type DeliveryStatus struct {
-	Status    string `json:"status"`
-	UpdatedAt int    `json:"updated_at"`
+	Status    DeliveryState `json:"status"`
+	UpdatedAt int64         `json:"updated_at"`
 }
 
 type VerificationStatus struct {
 	Status      string  `json:"status"`
-	UpdatedAt   int     `json:"updated_at"`
+	UpdatedAt   int64   `json:"updated_at"`
 	CodeEntered *string `json:"code_entered"`
 }
