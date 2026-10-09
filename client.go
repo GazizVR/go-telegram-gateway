@@ -27,6 +27,9 @@ func WithHttpClient(httpClient *http.Client) Option {
 
 func WithBaseURL(raw string) Option {
 	return func(c *Client) error {
+		if raw == "" {
+			return errors.New("base url must be non empty")
+		}
 		u, err := url.Parse(raw)
 		if err != nil {
 			return fmt.Errorf("invalid base url: %w", err)
