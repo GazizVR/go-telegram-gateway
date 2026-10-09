@@ -10,3 +10,7 @@ type SendVerificationMessageRequest struct {
 	Payload        string `json:"payload,omitempty"`
 	TTL            int    `json:"ttl,omitempty"`
 }
+
+type CheckSendAbilityRequest struct {
+	PhoneNumber string `json:"phone_number"`
+}

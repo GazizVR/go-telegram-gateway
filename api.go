@@ -14,3 +14,16 @@ func (c *Client) SendVerificationMessage(
 	}
 	return &status, nil
 }
+
+const methodCheckSendAbility = "checkSendAbility"
+
+func (c *Client) CheckSendAbility(
+	ctx context.Context,
+	req CheckSendAbilityRequest,
+) (*RequestStatus, error) {
+	var status RequestStatus
+	if err := c.call(ctx, methodCheckSendAbility, req, &status); err != nil {
+		return nil, err
+	}
+	return &status, nil
+}
