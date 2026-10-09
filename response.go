@@ -2,16 +2,13 @@ package telegramgateway
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
+	"net/http"
 )
 
-type Response struct {
-	Ok bool `json:"ok"`
-}
-
-type ErrorResponse struct {
-	Response
-	Error string `json:"error"`
+type response struct {
+	Ok    bool    `json:"ok"`
+	Error *string `json:"error"`
 }
 
 func (c *Client) parseResponse(
@@ -19,15 +16,23 @@ func (c *Client) parseResponse(
 	respBody []byte,
 	result any,
 ) error {
-	if statusCode >= 200 && statusCode < 300 {
-		var errResp ErrorResponse
-		if err := json.Unmarshal(respBody, &errResp); err != nil {
-			return err
+	var r response
+	if err := json.Unmarshal(respBody, &r); err != nil {
+		if statusCode < 200 || statusCode >= 300 {
+			apiErr := &APIError{StatusCode: statusCode, Message: http.StatusText(statusCode)}
+			return apiErr
 		}
-		return errors.New(errResp.Error)
+		return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
+	}
+	if !r.Ok {
+		apiErr := &APIError{StatusCode: statusCode, Message: http.StatusText(statusCode)}
+		if r.Error != nil {
+			apiErr.Message = *r.Error
+		}
+		return apiErr
 	}
 	if err := json.Unmarshal(respBody, result); err != nil {
-		return err
+		return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
 	}
 	return nil
 }

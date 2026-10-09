@@ -61,8 +61,5 @@ func (c *Client) call(
 	if err != nil {
 		return err
 	}
-	if err := c.parseResponse(statusCode, respBody, result); err != nil {
-		return nil
-	}
-	return nil
+	return c.parseResponse(statusCode, respBody, result)
 }
