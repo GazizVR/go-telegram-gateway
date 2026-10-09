@@ -27,3 +27,16 @@ func (c *Client) CheckSendAbility(
 	}
 	return &status, nil
 }
+
+const methodCheckVerificationStatus = "checkVerificationStatus"
+
+func (c *Client) CheckVerificationStatus(
+	ctx context.Context,
+	req CheckVerificationStatusRequest,
+) (*RequestStatus, error) {
+	var status RequestStatus
+	if err := c.call(ctx, methodCheckVerificationStatus, req, &status); err != nil {
+		return nil, err
+	}
+	return &status, nil
+}

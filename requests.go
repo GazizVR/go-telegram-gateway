@@ -14,3 +14,8 @@ type SendVerificationMessageRequest struct {
 type CheckSendAbilityRequest struct {
 	PhoneNumber string `json:"phone_number"`
 }
+
+type CheckVerificationStatusRequest struct {
+	PhoneNumber string `json:"phone_number"`
+	Code        string `json:"code,omitempty"`
+}
