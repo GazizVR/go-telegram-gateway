@@ -7,8 +7,9 @@ import (
 )
 
 type response struct {
-	Ok    bool    `json:"ok"`
-	Error *string `json:"error"`
+	Ok     bool            `json:"ok"`
+	Error  *string         `json:"error"`
+	Result json.RawMessage `json:"result"`
 }
 
 func (c *Client) parseResponse(
@@ -31,8 +32,10 @@ func (c *Client) parseResponse(
 		}
 		return apiErr
 	}
-	if err := json.Unmarshal(respBody, result); err != nil {
-		return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
+	if result != nil && len(r.Result) > 0 {
+		if err := json.Unmarshal(r.Result, result); err != nil {
+			return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
+		}
 	}
 	return nil
 }
