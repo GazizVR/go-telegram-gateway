@@ -7,28 +7,38 @@ import (
 )
 
 type response struct {
-	Ok     bool            `json:"ok"`
+	OK     bool            `json:"ok"`
 	Error  *string         `json:"error"`
 	Result json.RawMessage `json:"result"`
 }
 
-func (c *Client) parseResponse(
+func parseResponse(
 	statusCode int,
 	respBody []byte,
 	result any,
 ) error {
 	var r response
+	isSuccessStatus := statusCode >= 200 && statusCode < 300
 	if err := json.Unmarshal(respBody, &r); err != nil {
-		if statusCode < 200 || statusCode >= 300 {
-			apiErr := &APIError{StatusCode: statusCode, Message: http.StatusText(statusCode)}
+		if !isSuccessStatus {
+			apiErr := &APIError{
+				StatusCode: statusCode,
+				Message:    http.StatusText(statusCode),
+			}
 			return apiErr
 		}
 		return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
 	}
-	if !r.Ok {
-		apiErr := &APIError{StatusCode: statusCode, Message: http.StatusText(statusCode)}
+	if !r.OK || !isSuccessStatus {
+		apiErr := &APIError{
+			StatusCode: statusCode,
+			Message:    http.StatusText(statusCode),
+		}
 		if r.Error != nil {
 			apiErr.Message = *r.Error
+		}
+		if apiErr.Message == "" {
+			apiErr.Message = "unexpected error"
 		}
 		return apiErr
 	}
