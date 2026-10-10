@@ -1,3 +1,3 @@
 module github.com/gazizvr/go-telegram-gateway
 
-go 1.27.1
+go 1.21
