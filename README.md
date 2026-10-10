@@ -1,5 +1,8 @@
 # go-telegram-gateway
 
+[![CI](https://github.com/gazizvr/go-telegram-gateway/actions/workflows/ci.yml/badge.svg)](https://github.com/gazizvr/go-telegram-gateway/actions/workflows/ci.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/gazizvr/go-telegram-gateway.svg)](https://pkg.go.dev/github.com/gazizvr/go-telegram-gateway)
+
 Unofficial Go client for the [Telegram Gateway API](https://core.telegram.org/gateway/api):
 send and verify one-time codes through Telegram. Standard library only, no dependencies.
 
