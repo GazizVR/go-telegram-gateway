@@ -40,10 +40,10 @@ type Client struct {
 // Option configures a Client. Options are passed to NewClient.
 type Option func(*Client) error
 
-// WithHttpClient sets the HTTP client used to send requests.
+// WithHTTPClient sets the HTTP client used to send requests.
 // Use it to configure timeouts, proxies or transports.
 // It returns an error if httpClient is nil.
-func WithHttpClient(httpClient *http.Client) Option {
+func WithHTTPClient(httpClient *http.Client) Option {
 	return func(c *Client) error {
 		if httpClient == nil {
 			return errors.New("http client must not be nil")

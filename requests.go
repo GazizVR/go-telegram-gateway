@@ -37,9 +37,12 @@ type CheckSendAbilityRequest struct {
 // CheckVerificationStatusRequest holds the parameters of
 // Client.CheckVerificationStatus.
 type CheckVerificationStatusRequest struct {
-	PhoneNumber string `json:"phone_number"`
+	// RequestID is the identifier of the verification request to check.
+	RequestID string `json:"request_id"`
 	// Code is the code entered by the user. If set, the API checks it
-	// against the request.
+	// against the request. Even if you generated the code yourself, it is
+	// recommended to pass it here after the user enters it, so Telegram can
+	// track the verification conversion rate.
 	Code string `json:"code,omitempty"`
 }
 

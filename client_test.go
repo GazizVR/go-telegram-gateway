@@ -1,9 +1,9 @@
 package telegramgateway
 
 import (
-    "testing"
-    "time"
-    "net/http"
+	"net/http"
+	"testing"
+	"time"
 )
 
 const testToken = "secret_valid_token"
@@ -11,7 +11,7 @@ const testToken = "secret_valid_token"
 func TestClient_Default(t *testing.T) {
 	client, err := NewClient(testToken)
 	if err != nil {
-		t.Fatalf("unexpected error: %v",err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	if client == nil {
 		t.Fatal("expected client to not be nil")
@@ -52,7 +52,7 @@ func TestClient_BlankBaseURL(t *testing.T) {
 }
 
 func TestClient_InvalidBaseURL(t *testing.T) {
-    baseURL := "htpph:/localos:81246/method"
+	baseURL := "htpph:/localos:81246/method"
 	option := WithBaseURL(baseURL)
 	client, err := NewClient(testToken, option)
 	if err == nil {
@@ -64,7 +64,7 @@ func TestClient_InvalidBaseURL(t *testing.T) {
 }
 
 func TestClient_HttpClientNil(t *testing.T) {
-	option := WithHttpClient(nil)
+	option := WithHTTPClient(nil)
 	client, err := NewClient(testToken, option)
 	if err == nil {
 		t.Fatal("expected err to not be nil")
@@ -75,18 +75,18 @@ func TestClient_HttpClientNil(t *testing.T) {
 }
 
 func TestClient_CustomHttpClient(t *testing.T) {
-    httpClient := &http.Client{
-        Timeout: 30 * time.Second,
-    }
-    option := WithHttpClient(httpClient)
+	httpClient := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	option := WithHTTPClient(httpClient)
 	client, err := NewClient(testToken, option)
 	if err != nil {
-		t.Fatalf("unexpected error: %v",err)
+		t.Fatalf("unexpected error: %v", err)
 	}
 	if client == nil {
 		t.Fatal("expected client to not be nil")
-    }
-    if client.httpClient != httpClient {
-        t.Fatalf("httpClient pointer mismatch: got: %p, want: %p",client.httpClient,httpClient)
-    }
+	}
+	if client.httpClient != httpClient {
+		t.Fatalf("httpClient pointer mismatch: got: %p, want: %p", client.httpClient, httpClient)
+	}
 }

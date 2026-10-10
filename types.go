@@ -9,7 +9,7 @@ import (
 // Fields documented as nil-able are absent from the API response in some
 // cases, so check them before dereferencing.
 type RequestStatus struct {
-	RequestId   string `json:"request_id"`
+	RequestID   string `json:"request_id"`
 	PhoneNumber string `json:"phone_number"`
 	// RequestCost is the total cost of the request in credits.
 	RequestCost float64 `json:"request_cost"`
