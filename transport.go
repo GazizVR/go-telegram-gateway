@@ -10,6 +10,13 @@ import (
 	"net/url"
 )
 
+// do sends a POST request with body encoded as JSON to the given API method
+// and returns the HTTP status code and the raw response body.
+//
+// It does not interpret the response: any HTTP status is returned as is.
+// An error means the request was not sent or the body could not be read; in
+// that case statusCode is 0. Failures that happen after the request is on
+// the wire wrap ErrNetwork.
 func (c *Client) do(
 	ctx context.Context,
 	method string,
@@ -52,6 +59,9 @@ func (c *Client) do(
 	return resp.StatusCode, respBody, nil
 }
 
+// call sends a request to the given API method and decodes the "result" field
+// of the response into result, which must be a non-nil pointer, or nil if the
+// result is not needed.
 func (c *Client) call(
 	ctx context.Context,
 	method string,
