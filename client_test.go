@@ -3,6 +3,7 @@ package telegramgateway
 import (
     "testing"
     "time"
+    "net/http"
 )
 
 const testToken = "secret_valid_token"

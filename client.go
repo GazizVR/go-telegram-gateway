@@ -27,13 +27,16 @@ func WithHttpClient(httpClient *http.Client) Option {
 
 func WithBaseURL(raw string) Option {
 	return func(c *Client) error {
-		if raw == "" {
-			return errors.New("base url cannot be empty")
-		}
-		u, err := url.Parse(raw)
+		u, err := url.ParseRequestURI(raw)
 		if err != nil {
 			return fmt.Errorf("invalid base url: %w", err)
 		}
+        if u.Host == "" {
+            return errors.New("url host must not be empty")
+        }
+        if u.Scheme != "http" && u.Scheme != "https" {
+            return errors.New("url scheme must be http or https")
+        }
 		c.baseURL = u.String()
 		return nil
 	}
