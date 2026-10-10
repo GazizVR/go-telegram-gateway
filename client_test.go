@@ -2,6 +2,28 @@ package telegramgateway
 
 import "testing"
 
+const testToken = "secret_valid_token"
+
+func TestClient_Default(t *testing.T) {
+	client, err := NewClient(testToken)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if client == nil {
+		t.Fatal("expected client to not be nil")
+	}
+
+	if client.token != testToken {
+		t.Errorf("token: got: %q, want: %q", client.token, testToken)
+	}
+	if client.baseURL != defaultBaseURL {
+		t.Errorf("baseURL: got: %q, want: %q", client.baseURL, defaultBaseURL)
+	}
+	if client.httpClient == nil {
+		t.Error("expected client.httpClient to not be nil")
+	}
+}
+
 func TestClient_EmptyToken(t *testing.T) {
 	token := ""
 	client, err := NewClient(token)
@@ -13,32 +35,10 @@ func TestClient_EmptyToken(t *testing.T) {
 	}
 }
 
-func TestClient_Default(t *testing.T) {
-	token := "secret_valid_token"
-	client, err := NewClient(token)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-	if client == nil {
-		t.Fatal("expected client to not be nil")
-	}
-
-	if client.token != token {
-		t.Errorf("token: got: %q, want: %q", client.token, token)
-	}
-	if client.baseURL != defaultBaseURL {
-		t.Errorf("baseURL: got: %q, want: %q", client.baseURL, defaultBaseURL)
-	}
-	if client.httpClient == nil {
-		t.Error("expected client.httpClient to not be nil")
-	}
-}
-
 func TestClient_BlankBaseURL(t *testing.T) {
-	token := "secret_valid_token"
 	baseURL := ""
 	option := WithBaseURL(baseURL)
-	client, err := NewClient(token, option)
+	client, err := NewClient(testToken, option)
 	if err == nil {
 		t.Fatal("expected err to not be nil")
 	}
