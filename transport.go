@@ -47,13 +47,13 @@ func (c *Client) do(
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return 0, nil, fmt.Errorf("%w: %w", ErrNetwork, err)
+		return 0, nil, fmt.Errorf("do request: %w", err)
 	}
 
 	defer resp.Body.Close()
 	respBody, err = io.ReadAll(resp.Body)
 	if err != nil {
-		return 0, nil, fmt.Errorf("%w: %w", ErrNetwork, err)
+		return 0, nil, fmt.Errorf("read response: %w", err)
 	}
 
 	return resp.StatusCode, respBody, nil
@@ -70,7 +70,10 @@ func (c *Client) call(
 ) error {
 	statusCode, respBody, err := c.do(ctx, method, body)
 	if err != nil {
-		return err
+		return fmt.Errorf("telegramgateway: %s: %w", method, err)
 	}
-	return parseResponse(statusCode, respBody, result)
+	if err := parseResponse(statusCode, respBody, result); err != nil {
+		return fmt.Errorf("telegramgateway: %s: %w", method, err)
+	}
+	return nil
 }

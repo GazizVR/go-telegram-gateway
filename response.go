@@ -3,7 +3,6 @@ package telegramgateway
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 )
 
 // response is the envelope the Gateway API wraps every reply in:
@@ -27,33 +26,18 @@ func parseResponse(
 	result any,
 ) error {
 	var r response
-	isSuccessStatus := statusCode >= 200 && statusCode < 300
 	if err := json.Unmarshal(respBody, &r); err != nil {
-		if !isSuccessStatus {
-			apiErr := &APIError{
-				StatusCode: statusCode,
-				Message:    http.StatusText(statusCode),
-			}
-			return apiErr
-		}
-		return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
+		return fmt.Errorf("decode response: %w", err)
 	}
-	if !r.OK || !isSuccessStatus {
-		apiErr := &APIError{
-			StatusCode: statusCode,
-			Message:    http.StatusText(statusCode),
-		}
-		if r.Error != nil {
-			apiErr.Message = *r.Error
-		}
-		if apiErr.Message == "" {
-			apiErr.Message = "unexpected error"
-		}
-		return apiErr
+	if r.Error != nil {
+		return parseError(*r.Error)
+	}
+	if statusCode < 200 || statusCode >= 300 {
+		return &UnknownStatusError{StatusCode: statusCode}
 	}
 	if result != nil && len(r.Result) > 0 {
 		if err := json.Unmarshal(r.Result, result); err != nil {
-			return fmt.Errorf("%w (status %d): %w", ErrResponseParsing, statusCode, err)
+			return fmt.Errorf("decode result: %w", err)
 		}
 	}
 	return nil
