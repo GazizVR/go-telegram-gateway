@@ -14,6 +14,8 @@ func TestParseReponse(t *testing.T) {
 		{"normal", 200, `{"ok": true}`, false},
 		{"internal-err", 502, "", true},
 		{"empty", 200, "", true},
+		{"non-ok", 200, `{"ok": false}`, true},
+		{"empty-err", 500, "", true},
 	}
 	for _, resp := range resps {
 		t.Run(resp.name, func(t *testing.T) {

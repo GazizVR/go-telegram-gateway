@@ -26,14 +26,21 @@ func parseResponse(
 	result any,
 ) error {
 	var r response
+	isSuccessStatus := statusCode >= 200 && statusCode < 300
 	if err := json.Unmarshal(respBody, &r); err != nil {
+		if !isSuccessStatus {
+			return &UnknownStatusError{StatusCode: statusCode}
+		}
 		return fmt.Errorf("decode response: %w", err)
 	}
 	if r.Error != nil {
 		return parseError(*r.Error)
 	}
-	if statusCode < 200 || statusCode >= 300 {
+	if !isSuccessStatus {
 		return &UnknownStatusError{StatusCode: statusCode}
+	}
+	if !r.OK {
+		return &UnknownAPIError{}
 	}
 	if result != nil && len(r.Result) > 0 {
 		if err := json.Unmarshal(r.Result, result); err != nil {
