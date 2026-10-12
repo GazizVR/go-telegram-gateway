@@ -43,9 +43,16 @@ func main() {
 		CodeLength:  6,
 	})
 	if err != nil {
-		var apiErr *telegramgateway.APIError
-		if errors.As(err, &apiErr) {
-			log.Fatalf("api error: %s", apiErr.Message)
+		if errors.Is(err, telegramgateway.ErrPhoneNumberInvalid) {
+			log.Fatal("invalid phone number")
+		}
+		var floodErr *telegramgateway.FloodError
+		if errors.As(err, &floodErr) {
+			log.Fatalf("flood wait: %v", floodErr.WaitTime)
+		}
+		var statusErr *telegramgateway.UnknownStatusError
+		if errors.As(err, &statusErr) {
+			log.Fatalf("unexpected http status: %d", statusErr.StatusCode)
 		}
 		log.Fatal(err)
 	}
@@ -68,7 +75,7 @@ All methods take a `context.Context` as the first argument.
 
 ```go
 client, err := telegramgateway.NewClient(token,
-	telegramgateway.WithHttpClient(&http.Client{Timeout: 10 * time.Second}),
+	telegramgateway.WithHTTPClient(&http.Client{Timeout: 10 * time.Second}),
 	telegramgateway.WithBaseURL("http://localhost:8080"), // e.g. for tests
 )
 ```
@@ -77,11 +84,13 @@ The default HTTP client has no timeout, so set one or pass a context with a dead
 
 ## Errors
 
-- `*APIError`: the API rejected the request (`StatusCode`, `Message`). Use `errors.As`.
-- `ErrNetwork`: the request could not be sent or the response not read. Check
-  for `context.Canceled` / `context.DeadlineExceeded` before retrying.
-- `ErrResponseParsing`: the API answered successfully but the response could
-  not be decoded. The request may have been processed, so do not blindly retry.
+The client returns typed errors that can be inspected with `errors.Is` and `errors.As`:
+
+- **Sentinel errors**: Known API errors are mapped directly to typed sentinel errors such as `ErrPhoneNumberInvalid`, `ErrCodeInvalid`, `ErrBalanceNotEnough`, etc. Check with `errors.Is`.
+- `*FloodError`: The request was throttled by rate limits. Contains `WaitTime time.Duration` indicating how long to wait before retrying. Use `errors.As`.
+- `*UnknownAPIError`: The API rejected the request with an unrecognized error code or returned `"ok": false` without an error message (`Code string`). Use `errors.As`.
+- `*UnknownStatusError`: The server answered with a non-2xx HTTP status code (`StatusCode int`). This includes non-JSON error responses from proxies or upstream servers. Use `errors.As`.
+- **Decode errors**: If the server answers with a 2xx status code but the response envelope or `result` cannot be decoded as JSON, a wrapped decoding error is returned (`decode response: ...` or `decode result: ...`).
 
 ## Testing
 

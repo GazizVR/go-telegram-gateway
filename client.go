@@ -80,7 +80,7 @@ func WithBaseURL(raw string) Option {
 // It returns an error if the token is empty or any option is invalid.
 // By default the client uses http.DefaultClient, which has no timeout, so
 // pass a context with a deadline to every call or set your own client with
-// WithHttpClient.
+// WithHTTPClient.
 func NewClient(
 	token string,
 	options ...Option,

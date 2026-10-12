@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// Common sentinel errors returned when Telegram Gateway reports a known error code.
 var (
 	ErrCodeInvalid             = errors.New("code invalid")
 	ErrCodeExpired             = errors.New("code expired")
@@ -31,6 +32,8 @@ var (
 	ErrUnknownMethod           = errors.New("unknown method")
 )
 
+// FloodError is returned when request rate limits are exceeded.
+// WaitTime indicates how long the client should wait before retrying.
 type FloodError struct {
 	WaitTime time.Duration
 }
@@ -40,11 +43,16 @@ func (e *FloodError) Error() string {
 	return "flood wait " + suffix
 }
 
+// UnknownAPIError is returned when the API rejects a request with an unrecognized
+// error code, or when the response has "ok": false without an explicit error description.
 type UnknownAPIError struct {
 	Code string
 }
 
 func (e *UnknownAPIError) Error() string {
+	if e.Code == "" {
+		return "unknown api error"
+	}
 	return "unknown api error: " + e.Code
 }
 
@@ -86,6 +94,7 @@ func parseError(code string) error {
 	return &UnknownAPIError{Code: code}
 }
 
+// UnknownStatusError is returned when the server answers with an unexpected non-2xx HTTP status code.
 type UnknownStatusError struct {
 	StatusCode int
 }

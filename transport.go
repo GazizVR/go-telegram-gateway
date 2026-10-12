@@ -15,8 +15,7 @@ import (
 //
 // It does not interpret the response: any HTTP status is returned as is.
 // An error means the request was not sent or the body could not be read; in
-// that case statusCode is 0. Failures that happen after the request is on
-// the wire wrap ErrNetwork.
+// that case statusCode is 0.
 func (c *Client) do(
 	ctx context.Context,
 	method string,

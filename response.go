@@ -15,11 +15,15 @@ type response struct {
 
 // parseResponse turns an HTTP status code and body into an error or a result.
 //
-// It returns an *APIError if the status is not 2xx or the API reported
-// "ok": false, and wraps ErrResponseParsing if a successful response cannot
-// be decoded. The status is checked together with "ok" because a proxy may
-// answer with a non-2xx status and an unrelated body. On success it decodes
-// the "result" field into result, which must be a pointer or nil.
+// If decoding the response envelope fails:
+//   - returns *UnknownStatusError if statusCode is non-2xx;
+//   - returns a wrapped decode error if statusCode is 2xx.
+//
+// If the API reported an error code in the envelope, it returns a mapped sentinel error,
+// *FloodError, or *UnknownAPIError.
+// If the HTTP status is not 2xx, it returns *UnknownStatusError.
+// If "ok" is false, it returns *UnknownAPIError.
+// On success, it decodes the "result" field into result (if non-nil and present).
 func parseResponse(
 	statusCode int,
 	respBody []byte,
