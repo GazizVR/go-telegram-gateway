@@ -30,6 +30,8 @@ var (
 	ErrMessageAlreadySent      = errors.New("message already sent")
 	ErrBalanceNotEnough        = errors.New("balance not enough")
 	ErrUnknownMethod           = errors.New("unknown method")
+	ErrPhoneNumberNotFound     = errors.New("phone number not found")
+	ErrPhoneNumberNotAvailable = errors.New("phone number not available")
 )
 
 // FloodError is returned when request rate limits are exceeded.
@@ -64,6 +66,8 @@ var errByCode = map[string]error{
 	"CODE_MAX_ATTEMPTS_EXCEEDED": ErrCodeMaxAttemptsExceeded,
 	"PHONE_NUMBER_INVALID":       ErrPhoneNumberInvalid,
 	"PHONE_NUMBER_MISMATCH":      ErrPhoneNumberMismatch,
+	"PHONE_NUMBER_NOT_FOUND":     ErrPhoneNumberNotFound,
+	"PHONE_NUMBER_NOT_AVAILABLE": ErrPhoneNumberNotAvailable,
 	"REQUEST_ID_INVALID":         ErrRequestIDInvalid,
 	"REQUEST_ID_REQUIRED":        ErrRequestIDRequired,
 	"PAYLOAD_INVALID":            ErrPayloadInvalid,
