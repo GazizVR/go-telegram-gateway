@@ -56,7 +56,7 @@ func main() {
 		}
 		log.Fatal(err)
 	}
-	fmt.Println("request id:", status.RequestId)
+	fmt.Println("request id:", status.RequestID)
 }
 ```
 
